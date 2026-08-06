@@ -7,7 +7,7 @@
 ## English
 
 ### Introduction
-**SmaartLive Display** is an open-source project based on the ESP32 microcontroller and a HUB75 LED matrix. It connects directly to the **Smaart v9 (API v3)** server via WebSockets to fetch real-time SPL (Sound Pressure Level) metrics and visually display them on a 64x64 pixel LED matrix.
+**SmaartLive Display** is an open-source project based on the ESP32 microcontroller and a HUB75 LED matrix. It connects directly to the **Smaart v8/9 (API v3)** server via WebSockets to fetch real-time SPL (Sound Pressure Level) metrics and visually display them on a 64x64 pixel LED matrix.
 
 ![Preview](preview.gif)
 
@@ -62,7 +62,7 @@ Compiled using Arduino IDE. Please install the following libraries:
 ## Chinese
 
 ### 简介
-**SmaartLive Display** 是一个基于 ESP32 与 HUB75 LED 矩阵屏的开源项目。它通过 WebSocket 协议直连 **Smaart v9 (API v3)** 服务器，实时拉取并在 64x64 点阵屏上炫酷地展示 SPL (声压级) 数据。
+**SmaartLive Display** 是一个基于 ESP32 与 HUB75 LED 矩阵屏的开源项目。它通过 WebSocket 协议直连 **Smaart v8/9 (API v3)** 服务器，实时拉取并在 64x64 点阵屏上炫酷地展示 SPL (声压级) 数据。
 
 ![预览](preview.gif)
 
