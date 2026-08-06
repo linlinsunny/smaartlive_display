@@ -185,28 +185,58 @@ void handleRoot() {
 
 void handleSave() {
   if (server.hasArg("ip")) {
-    preferences.putString("ip", server.arg("ip"));
-    preferences.putString("port", server.arg("port"));
-    preferences.putString("metric", server.arg("metric"));
-    preferences.putString("lcolorhex", server.arg("labelcolor"));
-    preferences.putInt("colormode", server.arg("colormode").toInt());
-    preferences.putString("colorhex", server.arg("customcolor"));
-    preferences.putInt("offsetx", server.arg("offsetx").toInt());
-    preferences.putInt("offsety", server.arg("offsety").toInt());
-    preferences.putInt("labelx", server.arg("labelx").toInt());
-    preferences.putInt("labely", server.arg("labely").toInt());
-    preferences.putInt("brightness", server.arg("brightness").toInt());
-    preferences.putString("title", server.arg("title"));
-    preferences.putString("titlecolor", server.arg("titlecolor"));
-    preferences.putInt("titlesize", server.arg("titlesize").toInt());
-    preferences.putInt("titlex", server.arg("titlex").toInt());
-    preferences.putInt("titley", server.arg("titley").toInt());
+    String new_ip = server.arg("ip");
+    String new_port = server.arg("port");
+    String new_metric = server.arg("metric");
     
-    String html = "<html><head><meta charset='utf-8'></head><body style='background:#1a1a1a; color:#fff; text-align:center; font-family:sans-serif; padding-top:50px;'><h2>Saved Successfully! / 保存成功！</h2><p>Rebooting Matrix... / 屏幕即将重启...</p></body></html>";
+    // Check if network/API settings changed
+    bool require_reconnect = (String(smaart_ip) != new_ip) || (String(smaart_port) != new_port) || (String(smaart_metric) != new_metric);
+    
+    // Update global variables
+    new_ip.toCharArray(smaart_ip, 40);
+    new_port.toCharArray(smaart_port, 6);
+    new_metric.toCharArray(smaart_metric, 20);
+    
+    server.arg("labelcolor").toCharArray(label_color_hex, 8);
+    color_mode = server.arg("colormode").toInt();
+    server.arg("customcolor").toCharArray(custom_color_hex, 8);
+    offset_x = server.arg("offsetx").toInt();
+    offset_y = server.arg("offsety").toInt();
+    label_x = server.arg("labelx").toInt();
+    label_y = server.arg("labely").toInt();
+    matrix_brightness = server.arg("brightness").toInt();
+    
+    server.arg("title").toCharArray(title_text, 40);
+    server.arg("titlecolor").toCharArray(title_color_hex, 8);
+    title_size = server.arg("titlesize").toInt();
+    title_x = server.arg("titlex").toInt();
+    title_y = server.arg("titley").toInt();
+
+    // Save to preferences
+    preferences.putString("ip", smaart_ip);
+    preferences.putString("port", smaart_port);
+    preferences.putString("metric", smaart_metric);
+    preferences.putString("lcolorhex", label_color_hex);
+    preferences.putInt("colormode", color_mode);
+    preferences.putString("colorhex", custom_color_hex);
+    preferences.putInt("offsetx", offset_x);
+    preferences.putInt("offsety", offset_y);
+    preferences.putInt("labelx", label_x);
+    preferences.putInt("labely", label_y);
+    preferences.putInt("brightness", matrix_brightness);
+    preferences.putString("title", title_text);
+    preferences.putString("titlecolor", title_color_hex);
+    preferences.putInt("titlesize", title_size);
+    preferences.putInt("titlex", title_x);
+    preferences.putInt("titley", title_y);
+    
+    if (require_reconnect) {
+       needs_reconnect = true; 
+       stream_endpoint = ""; // Force re-fetch from main API
+    }
+    
+    String html = "<html><head><meta charset='utf-8'><meta http-equiv='refresh' content='1;url=/'></head><body style='background:#1a1a1a; color:#fff; text-align:center; font-family:sans-serif; padding-top:50px;'><h2>Saved Successfully! / 保存成功！</h2><p>Applying changes instantly... / 正在实时应用更改...</p></body></html>";
     server.send(200, "text/html", html);
-    
-    delay(1000);
-    ESP.restart();
   } else {
     server.send(400, "text/plain", "Bad Request");
   }
@@ -415,7 +445,11 @@ void loop() {
     needs_reconnect = false;
     webSocket.disconnect();
     delay(200);
-    webSocket.begin(smaart_ip, atoi(smaart_port), stream_endpoint.c_str());
+    if (stream_endpoint == "") {
+      webSocket.begin(smaart_ip, atoi(smaart_port), "/api/v3/");
+    } else {
+      webSocket.begin(smaart_ip, atoi(smaart_port), stream_endpoint.c_str());
+    }
   }
 
   webSocket.loop();
