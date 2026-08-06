@@ -47,7 +47,7 @@ Compiled using Arduino IDE. Please install the following libraries:
    Ensure your Smaart software has the API enabled:
    Go to menu **Options -> API**, and enable the API server.
    <br>
-   ![API Setup](api.png)
+   ![API Setup](API.png)
    <br>
    Also, ensure that **SPL Logging** is turned on in your SPL meters.
    <br>
@@ -98,7 +98,7 @@ Compiled using Arduino IDE. Please install the following libraries:
    务必确保 Smaart 软件的 API 功能已开启：
    在顶部菜单中选择 **Options -> API** 并开启服务。
    <br>
-   ![API设置](api.png)
+   ![API设置](API.png)
    <br>
    并且**必须勾选开启 SPL Logging (声压日志)** 功能。
    <br>
