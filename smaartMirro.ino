@@ -29,6 +29,13 @@ int label_x = 3;
 int label_y = 62;
 int matrix_brightness = 128; 
 
+// --- Title Config ---
+char title_text[40] = "";
+char title_color_hex[8] = "#FFFFFF";
+int title_x = 0;
+int title_y = 10;
+int title_size = 1;
+
 // --- HTTP Web Server (Always active after WiFi connects) ---
 WebServer server(80);
 
@@ -136,6 +143,14 @@ void handleRoot() {
   html += "<label>Port / 端口</label><input type='number' name='port' value='" + String(smaart_port) + "'>";
   html += "</div>";
 
+  html += "<div class='section'><h3>Top Title / 顶部标题</h3>";
+  html += "<label>Title Text / 标题文字</label><input type='text' name='title' value='" + String(title_text) + "'>";
+  html += "<label>Color / 颜色</label><input type='color' name='titlecolor' value='" + String(title_color_hex) + "'>";
+  html += "<label>Font Size / 字体大小</label><input type='number' name='titlesize' min='1' max='5' value='" + String(title_size) + "'>";
+  html += "<label>X Position / X 轴坐标</label><input type='number' name='titlex' value='" + String(title_x) + "'>";
+  html += "<label>Y Position / Y 轴坐标</label><input type='number' name='titley' value='" + String(title_y) + "'>";
+  html += "</div>";
+
   html += "<div class='section'><h3>Display Settings / 显示设置</h3>";
   html += "<label>Measurement Parameter / 测量参数 (数据源)</label><select name='metric'>";
   for (int i=0; i<NUM_METRICS; i++) {
@@ -181,6 +196,11 @@ void handleSave() {
     preferences.putInt("labelx", server.arg("labelx").toInt());
     preferences.putInt("labely", server.arg("labely").toInt());
     preferences.putInt("brightness", server.arg("brightness").toInt());
+    preferences.putString("title", server.arg("title"));
+    preferences.putString("titlecolor", server.arg("titlecolor"));
+    preferences.putInt("titlesize", server.arg("titlesize").toInt());
+    preferences.putInt("titlex", server.arg("titlex").toInt());
+    preferences.putInt("titley", server.arg("titley").toInt());
     
     String html = "<html><head><meta charset='utf-8'></head><body style='background:#1a1a1a; color:#fff; text-align:center; font-family:sans-serif; padding-top:50px;'><h2>Saved Successfully! / 保存成功！</h2><p>Rebooting Matrix... / 屏幕即将重启...</p></body></html>";
     server.send(200, "text/html", html);
@@ -279,6 +299,18 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
               dma_display->print(spl_str);
               dma_display->setFont();
               
+              // 4. Draw Title if exists
+              if (String(title_text) != "") {
+                long t_number = (long) strtol(&title_color_hex[1], NULL, 16);
+                uint16_t t_Color = getDimmedColor(t_number >> 16, t_number >> 8 & 0xFF, t_number & 0xFF);
+                dma_display->setFont(&Picopixel);
+                dma_display->setTextSize(title_size);
+                dma_display->setTextColor(t_Color);
+                dma_display->setCursor(title_x, title_y); 
+                dma_display->print(title_text);
+                dma_display->setFont();
+              }
+              
               // Push back buffer to screen (ELIMINATES FLICKER)
               dma_display->flipDMABuffer();
               break; 
@@ -306,6 +338,14 @@ void setup() {
   label_x = preferences.getInt("labelx", 3);
   label_y = preferences.getInt("labely", 62);
   matrix_brightness = preferences.getInt("brightness", 128);
+  String saved_title = preferences.getString("title", "");
+  String saved_title_color = preferences.getString("titlecolor", "#FFFFFF");
+  title_size = preferences.getInt("titlesize", 1);
+  title_x = preferences.getInt("titlex", 0);
+  title_y = preferences.getInt("titley", 10);
+  
+  saved_title.toCharArray(title_text, 40);
+  saved_title_color.toCharArray(title_color_hex, 8);
   
   saved_ip.toCharArray(smaart_ip, 40);
   saved_port.toCharArray(smaart_port, 6);
