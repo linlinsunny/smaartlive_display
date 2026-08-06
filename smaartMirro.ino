@@ -198,6 +198,12 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
     case WStype_DISCONNECTED:
       Serial.println("[WSc] Disconnected!");
       is_connected = false;
+      stream_endpoint = ""; // Reset endpoint so it re-discovers on reconnect
+      
+      dma_display->clearScreen();
+      drawTextCenter("Servers Lost", 25, getDimmedColor(255, 0, 0), false);
+      drawTextCenter("Reconnecting...", 40, getDimmedColor(255, 128, 0), false);
+      dma_display->flipDMABuffer();
       break;
     case WStype_CONNECTED:
       Serial.printf("[WSc] Connected to url: %s\n", payload);

@@ -44,7 +44,12 @@ Compiled using Arduino IDE. Please install the following libraries:
 ### Usage & Configuration
 1. **Flash the ESP32**: Flash the `smaartMirro.ino` code to your ESP32.
 2. **Smaart Software Setup**:
-   Ensure your Smaart software has the API enabled and SPL logging is turned on.
+   Ensure your Smaart software has the API enabled:
+   Go to menu **Options -> API**, and enable the API server.
+   <br>
+   ![API Setup](api.png)
+   <br>
+   Also, ensure that **SPL Logging** is turned on in your SPL meters.
    <br>
    ![Smaart Setup](smaart_set_up.png)
 3. **Connect to WiFi**: 
@@ -90,7 +95,12 @@ Compiled using Arduino IDE. Please install the following libraries:
 ### 使用说明
 1. **烧录代码**：将 `smaartMirro.ino` 烧录至 ESP32。
 2. **Smaart 软件端设置**：
-   务必确保 Smaart 软件的 API 功能已开启，并且**勾选开启了 SPL Logging (声压日志)** 功能。
+   务必确保 Smaart 软件的 API 功能已开启：
+   在顶部菜单中选择 **Options -> API** 并开启服务。
+   <br>
+   ![API设置](api.png)
+   <br>
+   并且**必须勾选开启 SPL Logging (声压日志)** 功能。
    <br>
    ![Smaart设置](smaart_set_up.png)
 3. **初次配网**： 
